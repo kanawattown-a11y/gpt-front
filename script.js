@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sendBtn = document.getElementById('send-btn');
     
     // **مهم جداً:** قم بتغيير هذا الرابط إلى رابط الواجهة الخلفية الخاصة بك على Render
-    const BACKEND_URL = 'https://gpt-back-zloy.onrender.com/';
+    const BACKEND_URL = 'https://gpt-back-zloy.onrender.com/chat';
 
     // إضافة رسالة إلى صندوق الشات
     function addMessage(text, sender ) {

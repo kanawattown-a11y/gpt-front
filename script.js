@@ -1,21 +1,20 @@
+// في ملف script.js
 document.addEventListener('DOMContentLoaded', () => {
     const chatBox = document.getElementById('chat-box');
     const userInput = document.getElementById('user-input');
     const sendBtn = document.getElementById('send-btn');
     
-    // **مهم جداً:** قم بتغيير هذا الرابط إلى رابط الواجهة الخلفية الخاصة بك على Render
+    // تأكد من أن هذا الرابط صحيح
     const BACKEND_URL = 'https://gpt-back-zloy.onrender.com/chat';
 
-    // إضافة رسالة إلى صندوق الشات
     function addMessage(text, sender ) {
         const messageElement = document.createElement('div');
         messageElement.classList.add('message', `${sender}-message`);
         messageElement.textContent = text;
         chatBox.appendChild(messageElement);
-        chatBox.scrollTop = chatBox.scrollHeight; // تمرير للأسفل دائماً
+        chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // إظهار مؤشر الكتابة
     function showLoadingIndicator() {
         const loadingElement = document.createElement('div');
         loadingElement.classList.add('loading-indicator');
@@ -24,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // إخفاء مؤشر الكتابة
     function hideLoadingIndicator() {
         const loadingElement = document.querySelector('.loading-indicator');
         if (loadingElement) {
@@ -32,14 +30,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // دالة إرسال الرسالة
     async function sendMessage() {
         const messageText = userInput.value.trim();
         if (messageText === '') return;
 
         addMessage(messageText, 'user');
         userInput.value = '';
-        userInput.style.height = 'auto'; // إعادة ضبط ارتفاع حقل الإدخال
+        userInput.style.height = 'auto';
         showLoadingIndicator();
 
         try {
@@ -54,20 +51,22 @@ document.addEventListener('DOMContentLoaded', () => {
             hideLoadingIndicator();
 
             if (!response.ok) {
-                throw new Error('حدث خطأ أثناء الاتصال بالخادم.');
+                // عرض رسالة خطأ أكثر تفصيلاً للمستخدم
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'حدث خطأ أثناء الاتصال بالخادم.');
             }
 
             const data = await response.json();
             addMessage(data.reply, 'bot');
 
         } catch (error) {
-            hideLoading-indicator();
-            addMessage('عذراً، لا يمكن الوصول إلى الخدمة حالياً. يرجى المحاولة مرة أخرى لاحقاً.', 'bot');
+            // *** تم التصحيح هنا ***
+            hideLoadingIndicator(); // كان اسمها hideLoading-indicator
+            addMessage(`عذراً، حدث خطأ: ${error.message}`, 'bot');
             console.error('Error:', error);
         }
     }
 
-    // ربط الأحداث
     sendBtn.addEventListener('click', sendMessage);
     userInput.addEventListener('keydown', (event) => {
         if (event.key === 'Enter' && !event.shiftKey) {
@@ -76,7 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // تعديل ارتفاع حقل الإدخال تلقائياً
     userInput.addEventListener('input', () => {
         userInput.style.height = 'auto';
         userInput.style.height = (userInput.scrollHeight) + 'px';

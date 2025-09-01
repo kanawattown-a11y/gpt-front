@@ -5,10 +5,19 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const BACKEND_URL = 'https://gpt-back-zloy.onrender.com/chat';
 
+    // --- *** تعديل دالة addMessage *** ---
     function addMessage(text, sender ) {
         const messageElement = document.createElement('div');
         messageElement.classList.add('message', `${sender}-message`);
-        messageElement.textContent = text;
+
+        if (sender === 'bot') {
+            // إذا كانت الرسالة من البوت، قم بتحويل Markdown إلى HTML
+            messageElement.innerHTML = marked.parse(text);
+        } else {
+            // إذا كانت من المستخدم، اعرضها كنص عادي للحماية
+            messageElement.textContent = text;
+        }
+
         chatBox.appendChild(messageElement);
         chatBox.scrollTop = chatBox.scrollHeight;
     }
@@ -42,7 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(BACKEND_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                // إرسال رسالة واحدة فقط
                 body: JSON.stringify({ message: messageText }),
             });
 
